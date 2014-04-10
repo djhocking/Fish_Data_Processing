@@ -1,0 +1,32 @@
+Shenandoah Single vs Multi-pass Sampling
+===========================================
+
+Cleaning before entry into R:
+* Replaced `,` with blank to read csv properly
+* Replaced `'` and `"` with blank to avoid problems reading in text columns
+* Replaced `ND` (No Data) with `NA` for missing data
+* Changed `Species` to `Code` in the fish data headers to be able to merge with the species data (could do in R after import)
+
+```{r setup, results = 'hide', message = FALSE, warning = FALSE}
+library(data.table)
+library(dplyr)
+library(ggplot2)
+
+setwd('/Users/Dan/Documents/Research/Stream_Climate_Change/Brook_Trout_Data/Southern/Shenandoah/')
+
+game <- fread("W_FI_Gamefish.csv", sep = ",")
+sites <- fread("Southern_Site_Info.csv", header = TRUE, sep = ",")
+spp <- fread("Southern_Spp_Codes.csv", header = TRUE, sep = ",")
+```
+
+
+
+
+
+
+
+
+
+
+
+

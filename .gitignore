@@ -1,0 +1,13 @@
+*.RData
+.RData
+.RHistory
+*.xls
+*.xlsx
+*.mpk
+*.mdb
+*.html
+*.png
+*.jpeg
+*.jpg
+*.tiff
+*.xml

@@ -1,0 +1,53 @@
+43,"ABL","Lamprey - American Brooke","Lampetra appendix","Petromyzonidae",,0,0,,,159708
+1,"AME","Eel- American","Anguilla rostrata","Anguillidae","EEL",0,10,1,"C",161127
+15,"BHC","Chub- Bluehead","Nocomis leptocephalus","Cyprinidae","BLHDCHUB",0,20,12,"C",163393
+10,"BKD","Dace- Blacknose","Rhinichthys atratulus","Cyprinidae","BLKNSEDACE",0,15,6,"A",163382
+2,"BKT","Trout- Brook","Salvelinus fontinalis","Salmonidae","BROOK",1,100,20,"A",162003
+22,"BLG","Bluegill","Lepomis gibbosus","Centrarchidae","BLGILL",1,,30,"U",168144
+33,"BLM","Minnow- Bluntnose","Pimephales notatus","Cyprinidae",,0,25,15,"U",163516
+45,"BRB","Bullhead- Brown","Ameiurus nebulosus","Ictaluridae",,1,,,,164043
+3,"BRT","Trout- Brown","Salmo trutta","Salmonidae","BROWN",1,101,22,"U",161997
+,"CAP","Carp- Common","Cyprinus carpio","Cyprinidae","CARP",0,,2,"R",163344
+42,"CCS","Chubsucker, Creek","Erimyzon oblongus","Catostomidae",,0,0,,,163924
+6,"CES","Stoneroller- Central","Campostoma anomalum","Cyprinidae","STONEROLLE",0,11,7,"U",163508
+16,"COS","Shiner- Common","Luxilus cornutus","Cyprinidae","COMSHINER",0,21,14,"C",163836
+12,"CRC","Chub- Creek","Semotilus atromaculatus","Cyprinidae","CREEKCHUB",0,17,9,"A",163376
+38,"CTT","Trout- Cutthroat","Oncorhynchus clarkii","Salmonidae",,1,,,,161983
+13,"CUM","Minnow- Cutlips","Exoglossum maxillingua","Cyprinidae","CUTLIPMINN",0,18,10,"U",163356
+29,"FAD","Darter- Fantail","Etheostoma flabellare","Percidae","FANDARTER",0,28,34,"C",168394
+11,"FAF","Fallfish","Semotilus corporalis","Cyprinidae","FALLFISH",0,16,8,"U",163375
+30,"GRD","Darter- Greenside","Etheostoma belnnioides","Percidae",,0,29,31,"R",168375
+0,"GSF","Sunfish- Green","Lepomis cyanellus","Centrarchidae",,1,,,,168132
+27,"JOD","Darter- Johnny","Etheostoma nigrum","Percidae","JOHNDARTER",0,26,32,"R",168369
+9,"LGD","Dace- Longnose","Rhinichthys cataractae","Cyprinidae","LONGNSDACE",0,14,5,"A",163384
+26,"LMB","Bass- Largemouth","Micropterus salmoides","Centrarchidae","LGMBASS",1,,28,"U",168160
+0,"LOS","Sunfish- Longear","Leponis megalotis",,,1,,,,168153
+20,"MAM","Madtom- Margined","Noturus insignis","Ictaluridae","MARMADTOM",0,25,19,"U",164004
+8,"MRD","Dace- Mountain Redbelly","Phoxinus oreas","Cyprinidae","MTREDDACE",0,13,3,"U",163595
+31,"MTS","Sculpin- Mottled","Cottus bairdi","Cottidae","MOTTSCULP",0,30,24,"A",167237
+18,"NHS","Hogsucker- Northern","Hypentelium nigricans","Catostomidae","HOGSUCKER",0,23,16,"U",163949
+0,"NOFISH","No Fish","No Fish","zNoFish","FISH-LESS",0,,,,
+0,"NOgFISH","No Fish","No Fish","zNoFish","FISH-LESS",1,,,,
+,"NotShockd","Not Shocked (see notes)","NotShocked","zNot Shocked","Not Shockd",0,,,,
+0,"PED","Dace- Pearl","Margariscus margarita","Cyprinidae",,0,0,,,163873
+24,"PKS","Pumpkinseed","Lepomis gibbosus","Centrarchidae","PUMPKINSED",1,,30,"U",168144
+32,"POS","Sculpin- Potomac","Cottus girardi","Cottidae","SCULPIN",0,31,25,"U",167243
+4,"RBT","Trout- Rainbow","Oncorhynchus mykiss","Salmonidae","RAINBOW",1,102,23,"U",161991
+23,"RDB","Sunfish- Redbreast","Lepomis auritus","Centrarchidae","REDBSF",1,,29,"U",168131
+21,"ROB","Bass- Rock","Ambloplites rupestris","Centrarchidae","ROCKBASS",1,,26,"U",168097
+14,"RRC","Chub- River","Nocomis micropogon","Cyprinidae","RIVERCHUB",0,19,11,"C",163392
+7,"RYD","Dace- Rosyside","Clinostomus funduloides","Cyprinidae","ROSYSIDACE",0,12,4,"A",163371
+44,"RYS","Shiner, Rosyface","Notropis rubellus","Cyprinidae",,0,0,,,163409
+,"SCU","Sculpin- Unknown","Cottus","Cottidae",,0,,,,167229
+0,"SFS","Shiner- Spotfin","Cyprinella spiloptera","Cyprinidae",,0,0,,,163803
+25,"SMB","Bass- Smallmouth","Micropterus dolomieu","Centrarchidae","SMLMTHBASS",1,,27,"U",550562
+34,"SNS","Shiner- Satinfin","Cyprinella analostana","Cyprinidae",,0,0,13,"R",163766
+41,"SWS","Swallowtail- Shiner","Notropis procne","Cyprinidae",,0,0,,,163407
+28,"TED","Darter- Tesselated","Etheostoma olmstedi","Percidae","TESLDARTR",0,27,33,"U",168360
+5,"TGT","Trout- Tiger","Salmo X Salvelinus hybrid","Salmonidae","TIGER",1,103,21,"U",-992
+19,"TOS","Sucker- Torrent","Thoburnia rhothoeca","Catostomidae","TORRSUCKER",0,24,17,"C",553276
+,"UNK","Unknown Spp > See Notes","Unknown Spp > See Notes","Unknown",,0,,,,
+0,"UNSCULP","Sculpin- Unknown","Cottus sp.","Cottidae",,0,,,,
+,"UNSHINR","Shiner- Unkown","Notropis sp.","Cyprinidae","SHINER",0,,,,163399
+17,"WHS","Sucker- White","Catastomus commersoni","Catostomidae","WHSUCKER",0,22,18,"C",553273
+36,"YEB","Bullhead- Yellow","Ameiurus natalis","Ictaluridae",,1,,,,164041

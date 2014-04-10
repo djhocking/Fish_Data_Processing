@@ -1,0 +1,232 @@
+Processing Southern Fish Data
+========================================================
+
+
+### Setup
+
+Cleaning before entry into R:
+* Replaced `,` with blank to read csv properly
+* Replaced `'` and `"` with blank to avoid problems reading in text columns
+* Replaced `ND` (No Data) with `NA` for missing data
+* Changed `Species` to `Code` in the fish data headers to be able to merge with the species data (could do in R after import)
+
+```{r setup, results = 'hide', message = FALSE, warning = FALSE}
+library(data.table)
+library(dplyr)
+library(ggplot2)
+
+setwd('/Users/Dan/Documents/Research/Stream_Climate_Change/Brook_Trout_Data/Southern/')
+
+fish <- fread("Southern_Fish.csv", header = TRUE, sep = ",")
+sites <- fread("Southern_Site_Info.csv", header = TRUE, sep = ",")
+spp <- fread("Southern_Spp_Codes.csv", header = TRUE, sep = ",")
+```
+
+Add primary key for resorting back to original data
+
+```{r primary key, results = 'hide'}
+summary(fish)
+fish$fish.key <- 1:length(fish$Pass)
+sites$site.key <- 1:length(sites$SiteID)
+spp$spp.key <- 1:length(spp$Code)
+```
+
+### Merge data sets, organize dates, and export
+
+```{r}
+data <- left_join(fish, sites, by = 'SiteID')
+summary(data)
+sites[which(is.na(sites$LonDD)), ]
+
+data <- left_join(data, spp, by = 'Code')
+summary(data)
+
+data$date <- as.Date(data$Date, format = "%m/%d/%Y")
+data$month <- as.numeric(format(data$date, format = "%m")) 
+data$doy <- strptime(data$Date, "%m/%d/%Y")$yday + 1
+
+head(data)
+
+write.table(data, "All_Field_Data.csv", row.names = FALSE, sep = ",")
+
+fish$date <- as.Date(fish$Date, format = '%m/%d/%Y')
+trip <- summarise(group_by(fish, TripID),
+                   Date = min(date),
+                  Year = mean(Year))
+
+trip$SiteID <- gsub("(.*)\\_.*", "\\1",  x = trip$TripID)
+```
+
+11 sites have not lat and lon recorded which results in 1272 records with missing location data out of 252,951 records (0.5%)
+
+### Add stages
+
+Plot histograms of all species lengths to get estimates of cutoffs for stage (hopefully doesn't have to be done by month)
+
+```{r results = 'hide'}
+# Plot to find cutoffs
+for(i in 1:length(unique(fish$Code))) {
+  g <- ggplot(filter(fish, Code == unique(fish$Code)[i]), aes(Length))
+  print(g + geom_histogram(binwidth = 10) + ggtitle(unique(fish$Code)[i]) + scale_x_continuous(breaks = seq(0, max(fish[which(fish$Code == unique(fish$Code)[i]), ]$Length, na.rm = T), 20)))
+  }
+
+i = 13
+g <- ggplot(filter(fish, Code == unique(fish$Code)[i] & Length < 200), aes(Length))
+print(g + geom_histogram(binwidth = 5) + ggtitle(unique(fish$Code)[i]) + scale_x_continuous(breaks = seq(0, 200, 10)))
+
+i = 14
+g <- ggplot(filter(fish, Code == unique(fish$Code)[i]), aes(Length))
+print(g + geom_histogram(binwidth = 10) + ggtitle(unique(fish$Code)[i]) + scale_x_continuous(breaks = seq(0, 200, 10)))
+```
+
+Potential Outlier Lengths:
+* SAFO > 300
+* SATR > ~350?
+* ONMY > ~320?
+* RHCA > 200
+* COBA > 150
+
+YOY cutoffs:
+* SAFO: 90 mm
+* LEGI: Insufficient Data
+* AMRU: Unclear
+* MIDO: 70 mm (not clear)
+* AMNA: Insufficient Data
+* SATR: 100 mm
+* LEAU: Insufficient Data
+* LEMA: Insufficient Data
+* HXTR: Insufficient Data
+* ONMY: 90 mm
+* AMNE: Insufficient Data
+* MISA: Insufficient Data
+* RHCA: 20 mm
+* RHAT: 10 mm
+* COBA: 40 mm (maybe 45 mm)
+* CAAN: Insufficient Data
+* SEAT: Insufficient Data
+
+```{r}
+# Add stage
+data$stage <- NA
+data[which(data$Length < 90 & data$Code == 'SAFO'), ]$stage <- 0 # YOY
+data$stage[which(data$Length >= 90 & data$Code == 'SAFO')] <- 1 # Adult
+
+data[which(data$Length < 70 & data$Code == 'MIDO'), ]$stage <- 0 # YOY
+data$stage[which(data$Length >= 70 & data$Code == 'MIDO')] <- 1 # Adult
+
+data$stage[which(data$Length < 100 & data$Code == 'SATR')] <- 0 # YOY
+data$stage[which(data$Length >= 100 & data$Code == 'SATR')] <- 1 # Adult
+
+data$stage[which(data$Length < 90 & data$Code == 'ONMY')] <- 0 # YOY
+data$stage[which(data$Length >= 90 & data$Code == 'ONMY')] <- 1 # Adult
+
+data$stage[which(data$Length < 20 & data$Code == 'RHCA')] <- 0 # YOY
+data$stage[which(data$Length >= 20 & data$Code == 'RHCA')] <- 1 # Adult
+
+data$stage[which(data$Length < 10 & data$Code == 'RHAT')] <- 0 # YOY
+data$stage[which(data$Length >= 10 & data$Code == 'RHAT')] <- 1 # Adult
+
+data$stage[which(data$Length < 40 & data$Code == 'COBA')] <- 0 # YOY
+data$stage[which(data$Length >= 40 & data$Code == 'COBA')] <- 1 # Adult
+```
+
+Convert to count data (problem of how to fill in zeros) - maybe should do this for all species before subsetting to bkt. Would have to assign stage wherever possible first
+
+```{r}
+# Remove any rows where pass = NA
+data <- data[which(data$Pass != "NA"), ]
+summary(data)
+
+count <- summarise(group_by(data, TripID, Pass, Code), 
+                   count = n(),
+                   length.mean = mean(Length),
+                   mass.mean = mean(Weight))
+
+count.stage <- summarise(group_by(data, TripID, Pass, Code, stage), 
+                   count = n(),
+                   length.mean = mean(Length),
+                   mass.mean = mean(Weight))
+```
+
+Expand data to include zeros for all species per trip and pass. Then merge back with trip and site information.
+
+```{r}
+# Expand to trip-species-pass
+mergedData <- merge(
+    expand.grid(TripID = unique(data$TripID), Code = unique(data$Code), Pass = unique(data$Pass)),
+    y = count, by = c("TripID", "Code", "Pass"), all.x = T)
+head(mergedData, 100)
+summary(mergedData)
+
+mergedData[is.na(mergedData$count), ]$count <- 0
+
+# remerge/join the environmental variables
+mergedData$TripID <- as.character(mergedData$TripID)
+
+all.count <- left_join(mergedData, trip, by = 'TripID') # Add observational info (date)
+
+all.count <- left_join(all.count, sites, by = 'SiteID')
+all.count$Code <- as.character(all.count$Code)
+all.count <- left_join(all.count, spp, by = 'Code')
+str(all.count)
+summary(all.count)
+head(all.count, 25)
+
+# Remove extra columns and rename remaining columns**********************
+
+data$date <- as.Date(data$Date, format = "%m/%d/%Y")
+data$month <- as.numeric(format(data$date, format = "%m")) 
+data$doy <- strptime(data$Date, "%m/%d/%Y")$yday + 1
+
+head(data)
+
+# Need to do this for stage-based data too (then separate adults)
+count.stage$TripID <- as.factor(count.stage$TripID)
+
+mergedData <- merge(
+    expand.grid(TripID = unique(data$TripID), Code = unique(data$Code), Pass = unique(data$Pass)),
+    y = count.stage, by = c("TripID", "Code", "Pass"), all.x = T)
+head(mergedData, 100)
+summary(mergedData)
+
+mergedData[is.na(mergedData$count), ]$count <- 0
+
+# Need to remerge/join the environmental variables
+
+# could probably do this better with SQL query coding
+count.stage <- left_join(mergedData, data, by = 'TripID') # Add site & observational info (date)
+count.stage$Code <- count.stage$Code.x
+count.stage <- left_join(count.stage, spp, by = 'Code')
+str(count.stage)
+summary(data)
+summary(count.stage)
+head(count.stage, 25)
+sites[which(is.na(sites$LonDD)), ]
+
+summary(count.stage)
+count.stage$Pass.x == count.stage$Pass.y
+
+# Keep only useful columns, reorder, and rename
+vars <- c("State", "SiteID", "LatDD", "LonDD", "TripID", "Pass.x", )
+count.stage <
+
+count.adult <- filter(count.stage, filter = stage == 1)
+
+summary(count)
+head(count, 50)
+```
+
+### Subset brook trout data and clean
+ Consider keeping brown trout to use as a covariate
+
+```{r}
+summary(filter(fish, Species == 'SAFO')) # check lengths around min and max
+
+ggplot(filter(fish, Species == 'SAFO' & Length < 250), aes(Length), ) + 
+  geom_histogram(binwidth = 10) + 
+  scale_x_continuous(breaks = seq(0, 250, 20))
+
+safo <- filter(fish, Species == 'SAFO')
+
+summarise(filter(group_by(data, Pass), Code == 'SAFO'), mean(Length, na.rm = TRUE)) # catch biggest SAFO first 
+```

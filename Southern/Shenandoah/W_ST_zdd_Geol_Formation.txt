@@ -1,0 +1,6 @@
+1,"Hampton, Erwin, and Weverton formations.","ANC-L"
+2,"Pedler formation.","ANC-H"
+3,"Catoctin and Pedlar formations.","ANC-H"
+4,"Catoctin, Erwin, Hampton, Pedlar, Swift Run, and Weverton formations.","ANC-H"
+5,"Catoctin, Old Rag Granite, and Pedlar formations.","ANC-H"
+6,"Catoctin, Pedlar, and Weverton formatons.","ANC-H"
