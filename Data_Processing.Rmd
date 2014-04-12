@@ -7,6 +7,8 @@ Processing Raw Brook Trout Data
 Set working directory and load packages
 ```{r working directory and libraries, warning = FALSE, message = FALSE, echo = TRUE, results = 'hide'}
 
+setwd('/Users/Dan/Documents/Research/Stream_Climate_Change/Brook_Trout/Data/')
+
 library(dplyr)
 library(data.table)
 library(reshape2)
@@ -70,11 +72,21 @@ ggplot(data = ct.raw, aes(sample.length, count)) + geom_point()
 
 ct.raw$date <- as.Date(ct.raw$date1, "%m/%d/%Y")
 
+ct.raw$year <- as.numeric(format(ct.raw$date, format = "%Y"))
+ct.raw$month <- as.numeric(format(ct.raw$date, format = "%m")) 
+
+
+library(ggmap)
+map.center <- geocode("Hartford, CT")
+baseMap <- qmap(c(lon=map.center$lon, lat=map.center$lat), source="google", zoom=7)
+baseMap + geom_point(aes(x=lon, y=lat), 
+                                #size=(count)),
+                                #color=factor(pres)), 
+                            data=ct.raw[which(ct.raw$sci.name == "Salvelinus fontinalis"), ])
+  #ggtitle( as.character(y)))
 ```
 
-strptime for date
-
-Add calculated fields (turn length into stage - at least for brook trout >80 mm in August = adult)
+Add calculated fields (turn length into stage - at least for brook trout >80 mm in August = adult) - or do when combine all data
 
 What to do about timing of surveys affecting detection of YOY, include stage at all?
 
@@ -90,10 +102,18 @@ MA
 ------------------------------------------------
 
 ```{r results = 'hide'}
-setwd('/Users/Dan/Documents/Research/Stream_Climate_Change/Brook_Trout_Data/MA_Raw/')
+setwd('/Users/Dan/Documents/Research/Stream_Climate_Change/Brook_Trout/Data/MA_Raw/')
 
 ma.raw <- read.table('Mass_fish_data_EBTJV_7-15-13.csv', sep = ",", header = TRUE)
+
+str(ma.raw)
+head(ma.raw[ , -c(14,15)], 30)
+
+
 ```
+
+Any data not summarized yet? Talk to Yoichiro and contact state of mass biologist to get all fish data if possible, not summarized
+
 
 
 ME
@@ -104,7 +124,7 @@ Use the `read.dbf` function in the `foreign` package to read in data from the sh
 ```{r results = 'hide'}
 library(foreign)
 
-setwd('/Users/Dan/Documents/Research/Stream_Climate_Change/Brook_Trout_Data/ME_Raw/')
+setwd('/Users/Dan/Documents/Research/Stream_Climate_Change/Brook_Trout/Data/ME_Raw/')
 me.raw <- read.dbf("Data_Request_EBTJV_Maine.dbf")
 
 str(me.raw)
@@ -114,6 +134,8 @@ head(me.raw, 30)
 levels(as.factor(me.raw$RUNNUM))
 levels(as.factor(me.raw$LIFE_STAGE))
 
+me.raw[which(me.raw$SPP == "BKT"), c("BEGDATE", "GEAR_TYPE", "LIFE_STAGE", "ABUNDANCE")]
+
 me.raw2 <- read.dbf("DATA_REQ.dbf")
 str(me.raw2)
 summary(me.raw2)
@@ -121,6 +143,27 @@ head(me.raw2, 20)
 
 dim(me.raw)
 dim(me.raw2)
+
+length(me.raw2[which(me.raw2$RUNNUM > 1), ]$RUNNUM)
+
+me.raw2[which(me.raw2$RUNNUM > 1 & me.raw2$SPP == "BKT"), c("TOPUTMX", "TOPUTMY", "LOCATIONID", "RUNNUM", "SPP", "LIFE_STAGE", "BEGDATE", "ABUNDANCE")]
+
+me.raw2[which(me.raw2$RUNNUM > 1 & me.raw2$SPP == "BKT"), c("LOCATIONID", "RUNNUM", "SPP", "LIFE_STAGE", "BEGDATE", "ABUNDANCE", "GEAR_TYPE")] # appear to be duplicate records!!!
+
+me.raw2[c(3645, 3650), ]
+
+me.raw2.unique <- unique(me.raw2) # remove duplicate records
+dim(me.raw2.unique)
+
+me.raw2.unique[which(me.raw2.unique$RUNNUM > 1 & me.raw2.unique$SPP == "BKT"), c("LOCATIONID", "RUNNUM", "SPP", "LIFE_STAGE", "BEGDATE", "ABUNDANCE")] # much better
+
+dim(me.raw2.unique)
+dim(me.raw2.unique[which(me.raw2.unique$RUNNUM == 2 & me.raw2.unique$SPP == "BKT"), ])
+# Only ~1% of site-visits had at least 2 passes
+
+me.raw2.unique[which(me.raw2.unique$LIFE_STAGE == "Adults/Juveniles"), ]
+
+
 ```
 
 **ISSUES**
@@ -133,7 +176,8 @@ dim(me.raw2)
   * YOY/Juveniles/Adults
 4. Currently no sample length
 5. SPP merge with species codes file
-6. Two .dbf files are almost identical but have slightly different mean abundances and NA (NA stored as 0 in one?)
+6. Two .dbf files are almost identical but have slightly different mean abundances and NA (NA stored as 0 in one?) - Use DATA_REQ.dbf
+7. Duplicate records!!!
 
 
 
@@ -143,7 +187,7 @@ NH
 I removed `"`, `'`, `;`, `:`, and `,` in the data for importing into R. Also replaced `n/a` and `<100` with `NA`. I also removed spaces in the headings. Otherwise, I left the data alone so all the processing could be done transparently and reproducibly in R.
 
 ```{r results = 'hide'}
-setwd('/Users/Dan/Documents/Research/Stream_Climate_Change/Brook_Trout_Data/NH_Raw/')
+setwd('/Users/Dan/Documents/Research/Stream_Climate_Change/Brook_Trout/Data/NH_Raw/')
 
 nh.raw <- fread("NH_data_Enumerated.csv", header = TRUE, sep = ",", na.strings = c("NA", "na", "N/A", "n/a", "", "<100")) # check warnings() to find where errors such as "<100" cause problems with numeric columns, use colClasses if needed
 str(nh.raw)
@@ -217,7 +261,15 @@ nh.raw$site <- paste(nh.raw$lat, nh.raw$lon)
 NY
 ------------------------------------------------
 
+```{r results = 'hide'}
+setwd('/Users/Dan/Documents/Research/Stream_Climate_Change/Brook_Trout/Data/NY_Raw/')
 
+ny.raw <- fread("NY_BKT_Data.csv", header = TRUE, sep = ",", na.strings = c("NA", "na", "N/A", "n/a", ""))
+str(ny.raw)
+summary(ny.raw)
+head(ny.raw, 30)
+
+```
 
 
 
